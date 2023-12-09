@@ -15,6 +15,8 @@ gameScene.init = function () {
   // enemy boundary
   this.enemyMaxY = 280;
   this.enemyMinY = 80;
+
+  this.isTerminating = false;
 };
 
 // ====================================================================
@@ -83,6 +85,8 @@ gameScene.create = function () {
 // ====================================================================
 // called upto 60 times per second (frame rate)
 gameScene.update = function () {
+  if (this.isTerminating) return;
+
   // check user input
   if (this.input.activePointer.isDown) {
     this.player.x += this.playerSpeed;
@@ -94,7 +98,8 @@ gameScene.update = function () {
 
   if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, treasureRect)) {
     console.log("Goal");
-    this.scene.restart();
+
+    return this.gameOver();
   }
 
   // get enemies
@@ -121,9 +126,29 @@ gameScene.update = function () {
 
     if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, enemyRect)) {
       console.log("Game over");
-      this.scene.restart();
+
+      return this.gameOver();
     }
   }
+};
+
+gameScene.gameOver = function () {
+  this.isTerminating = true;
+  const camera = this.cameras.main;
+
+  // shake camera
+  camera.shake(500);
+
+  // listen on effect complete
+  camera.on(
+    "camerashakecomplete",
+    function () {
+      camera.fade(500);
+    },
+    this
+  );
+
+  camera.on("camerafadeoutcomplete", () => this.scene.restart(), this);
 };
 
 // ==================================================================
