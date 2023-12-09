@@ -23,22 +23,40 @@ gameScene.create = function () {
   bg.setPosition(gameW / 2, gameH / 2);
 
   // create player
-  const player = this.add.sprite(50, 180, "player");
-  // player.depth = 1 // layer position of sprite; default is 0
-  // player.x = 7; // alternative to setPosition()
+  this.player = this.add.sprite(50, 180, "player");
+  // this.player.depth = 1 // layer position of sprite; default is 0
+  // this.player.x = 7; // alternative to setPosition()
 
-  // player.setScale(2, 2);
-  player.setScale(2, 2);
+  // this.player.setScale(2, 2);
+  // this.player.setScale(2);
 
   // create enemy
-  const enemy = this.add.sprite(250, 180, "enemy");
-  enemy.scaleX = 2;
-  enemy.scaleY = 2;
-  
+  this.enemy = this.add.sprite(250, 180, "enemy");
+  this.enemy.scaleX = 2;
+  this.enemy.scaleY = 2;
+
   // create second enemy
-  const enemy2 = this.add.sprite(450, 180, "enemy");
-  enemy2.flipX = true;
-  enemy2.flipY = true;
+  this.enemy2 = this.add.sprite(450, 180, "enemy");
+  this.enemy2.flipX = true;
+  this.enemy2.flipY = true;
+
+  // rotation
+  // this.enemy.setOrigin(0, 0);
+  // this.enemy.angle = 45
+  // this.enemy.setAngle(-45)
+  // this.enemy.rotation = Math.PI / 4
+  this.enemy.setRotation(Math.PI / 4);
+};
+
+// called upto 60 times per second (frame rate)
+gameScene.update = function () {
+  // this.enemy.x += 1
+  // this.enemy.angle +=1
+
+  if (this.player.scaleX < 2) {
+    this.player.scaleX += 0.01;
+    this.player.scaleY += 0.01;
+  }
 };
 
 // setting game configuration
