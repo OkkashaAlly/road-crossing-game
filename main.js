@@ -6,7 +6,14 @@ const gameScene = new Phaser.Scene("Game");
 
 // initial scene parameters
 gameScene.init = function () {
-  this.playerSpeed = 2.5;
+  this.playerSpeed = 3;
+
+  this.enemyMinSpeed = 2;
+  this.enemyMaxSpeed = 3;
+
+  // enemy boundary
+  this.enemyMaxY = 280;
+  this.enemyMinY = 80;
 };
 
 // loading assets
@@ -31,7 +38,16 @@ gameScene.create = function () {
   this.player.setScale(0.5);
 
   // create enemy
-  this.enemy = this.add.sprite(250, 180, "enemy");
+  this.enemy = this.add.sprite(100, gameH / 2, "enemy").setScale(0.6);
+  this.enemy.flipX = true;
+
+  // set enemy speed
+  const direction = Math.random() < 0.5 ? 1 : -1;
+  const speed =
+    this.enemyMinSpeed +
+    Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
+  this.enemy.speed = direction * speed;
+  console.log("🚀 ~ file: main.js:50 ~ this.enemy.speed:", this.enemy.speed)
 
   // create goal
   this.goal = this.add.sprite(gameW - 80, gameH / 2, "goal").setScale(0.6);
@@ -51,6 +67,18 @@ gameScene.update = function () {
   if (Phaser.Geom.Intersects.RectangleToRectangle(playerRect, treasureRect)) {
     console.log("Goal");
     this.scene.restart();
+  }
+
+  // enemy movement
+  this.enemy.y += this.enemy.speed;
+
+  // check we haven't passed min or max Y
+  const conditionUp = this.enemy.y <= this.enemyMinY;
+  const conditionDown = this.enemy.y >= this.enemyMaxY;
+
+  // if passed lower or higher limit, reverse the speed
+  if (conditionUp || conditionDown) {
+    this.enemy.speed *= -1;
   }
 };
 
